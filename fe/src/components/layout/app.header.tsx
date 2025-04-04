@@ -40,13 +40,13 @@ const AppHeader = () => {
               <span className="text-black">0</span>
             </div>
             <Popover content={content} title="Title">
-              <FaShoppingCart size={30} color="white" />
+              <FaShoppingCart size={20} color="white" />
             </Popover>
           </div>
           <div>
             <Dropdown menu={{ items }}>
               <Space>
-                <FaUser size={30} color="white" />
+                <FaUser size={20} color="white" />
                 <span className="text-white"> Settings</span>
                 <DownOutlined style={{ color: "white" }} />
               </Space>
