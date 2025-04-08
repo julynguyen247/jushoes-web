@@ -7,14 +7,17 @@ type FieldType = {
   password?: string;
   remember?: string;
 };
-const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-  console.log("Success:", values);
-};
 
-const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
-  console.log("Failed:", errorInfo);
-};
 const LoginPage = () => {
+  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    console.log("Success:", values);
+  };
+
+  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
+    errorInfo
+  ) => {
+    console.log("Failed:", errorInfo);
+  };
   const navigate = useNavigate();
   return (
     <div className="flex justify-center items-center flex-1 h-[100vh] w-[100vw]">
