@@ -7,6 +7,7 @@ import HomePage from "./pages/client/home";
 import RegisterPage from "./pages/client/register";
 import { App } from "antd";
 import AdminLayout from "./components/layout/layout.admin";
+import Dashboard from "./pages/admin/dashboard";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     Component: AdminLayout,
+    children: [{ index: true, Component: Dashboard }],
   },
   {
     path: "/login",
