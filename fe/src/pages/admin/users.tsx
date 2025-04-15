@@ -1,7 +1,11 @@
-import React from "react";
+import TableUser from "../../components/admin/users/table.users";
 
 const Users = () => {
-  return <div>Users</div>;
+  return (
+    <>
+      <TableUser />
+    </>
+  );
 };
 
 export default Users;

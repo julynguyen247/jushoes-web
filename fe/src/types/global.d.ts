@@ -10,4 +10,10 @@ declare global {
     email: string;
     password: string;
   }
+  interface IUserTable {
+    _id: string;
+    fullName: string;
+    email: string;
+    createdAt: string;
+  }
 }

@@ -40,7 +40,7 @@ const AdminLayout: React.FC = () => {
             {
               key: "4",
               icon: <DollarCircleOutlined />,
-              label: <Link to="/admin/users">Orders</Link>,
+              label: <Link to="/admin/orders">Orders</Link>,
             },
           ]}
         />
