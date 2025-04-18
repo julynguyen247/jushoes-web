@@ -75,7 +75,6 @@ const AppHeader = () => {
         </div>
       </div>
 
-      {/* Bottom nav */}
       <div className="flex flex-row h-[5vh] shadow bg-white justify-center items-center gap-10">
         {["Adidas", "Nike", "Puma", "Bitis", "Jordan", "Converse"].map(
           (brand) => (

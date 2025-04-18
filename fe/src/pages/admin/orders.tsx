@@ -1,7 +1,11 @@
-import React from "react";
+import TableOrders from "@/components/admin/orders/orders.table";
 
 const Orders = () => {
-  return <div>Orders</div>;
+  return (
+    <>
+      <TableOrders />
+    </>
+  );
 };
 
 export default Orders;

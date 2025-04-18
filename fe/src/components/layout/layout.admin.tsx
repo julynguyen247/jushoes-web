@@ -2,16 +2,22 @@ import React from "react";
 import {
   DashboardOutlined,
   UserOutlined,
-  SettingOutlined,
   DollarCircleOutlined,
   ExceptionOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu } from "antd";
+import { Dropdown, Layout, Menu, Space } from "antd";
 import { Link, Outlet } from "react-router-dom";
-
-const { Header, Sider, Content, Footer } = Layout;
+import { FaUser } from "react-icons/fa";
+import { MenuProps } from "antd/lib";
 
 const AdminLayout: React.FC = () => {
+  const items: MenuProps["items"] = [
+    { key: "1", label: <Link to="/admin">Admin</Link> },
+    { key: "2", label: <Link to="/login">Login</Link> },
+    { key: "3", label: <Link to="/info">Change Info</Link> },
+  ];
+  const { Header, Sider, Content, Footer } = Layout;
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsible>
@@ -47,8 +53,25 @@ const AdminLayout: React.FC = () => {
       </Sider>
 
       <Layout>
-        <Header style={{ background: "#fff", padding: "0 24px" }}>
-          <h1 className="text-lg font-semibold">Quản trị hệ thống</h1>
+        <Header
+          style={{
+            background: "white",
+            padding: "0 24px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <span className="font-medium text-2xl">Management Page</span>
+          </div>
+          <Dropdown menu={{ items }}>
+            <Space>
+              <FaUser size={20} />
+              <span> Settings</span>
+              <DownOutlined />
+            </Space>
+          </Dropdown>
         </Header>
 
         <Content style={{ margin: "16px" }}>
