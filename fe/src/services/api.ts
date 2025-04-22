@@ -23,3 +23,7 @@ export const registerAPI = (
     fullName,
   });
 };
+export const fetchAccountAPI = () => {
+  const urlBackend = "/api/v1/auth/profile";
+  return axios.get<IBackendRes<IUser>>(urlBackend);
+};

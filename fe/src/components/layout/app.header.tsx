@@ -4,11 +4,12 @@ import { FaShoppingCart, FaUser } from "react-icons/fa";
 import { FcDislike } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
+import { useCurrentApp } from "../context/app.context";
 
 const AppHeader = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-
+  const { user } = useCurrentApp();
   const items: MenuProps["items"] = [
     { key: "1", label: <Link to="/admin">Admin</Link> },
     { key: "2", label: <Link to="/login">Login</Link> },
@@ -67,7 +68,7 @@ const AppHeader = () => {
             <Dropdown menu={{ items }}>
               <Space>
                 <FaUser size={20} color="white" />
-                <span className="text-white"> Settings</span>
+                <span className="text-white">{user?.fullName}</span>
                 <DownOutlined style={{ color: "white" }} />
               </Space>
             </Dropdown>

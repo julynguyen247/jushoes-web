@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { fetchAccountAPI } from "../../services/api";
 
 interface IAppContext {
   isAuthenticated: boolean;
@@ -16,7 +17,16 @@ type TProps = {
 export const AppProvider = (props: TProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<IUser | null>(null);
-
+  useEffect(() => {
+    const fetchAccount = async () => {
+      const res = await fetchAccountAPI();
+      if (res.data) {
+        setUser(res.data);
+        setIsAuthenticated(true);
+      }
+    };
+    fetchAccount();
+  }, []);
   return (
     <>
       <CurrentAppContext.Provider
