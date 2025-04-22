@@ -7,13 +7,27 @@ declare global {
     data?: T;
   }
   interface ILogin {
-    email: string;
-    password: string;
+    access_token: string;
+    user: {
+      email: string;
+      fullName: string;
+      _id: string;
+    };
   }
   interface IUserTable {
     _id: string;
     fullName: string;
     email: string;
     createdAt: string;
+  }
+  interface IUser {
+    email: string;
+    fullName: string;
+    _id: string;
+  }
+  interface IRegister {
+    email: string;
+    fullName: string;
+    _id: string;
   }
 }

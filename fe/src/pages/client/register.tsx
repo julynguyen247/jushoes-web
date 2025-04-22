@@ -1,16 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import type { FormProps } from "antd";
-import { Button, Checkbox, Form, Input } from "antd";
+import { App, Button, Checkbox, Form, Input } from "antd";
 import { useNavigate } from "react-router-dom";
+import { registerAPI } from "@/services/api";
 type FieldType = {
-  username?: string;
-  password?: string;
-  remember?: string;
+  email: string;
+  password: string;
+  fullName: string;
 };
 
 const RegisterPage = () => {
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Success:", values);
+  const [isSubmit, setIsSubmit] = useState(false);
+  const { message } = App.useApp();
+  const navigate = useNavigate();
+
+  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    setIsSubmit(true);
+    const { email, fullName, password } = values;
+
+    const res = await registerAPI(email, password, fullName);
+    if (res.data) {
+      //success
+      message.success("Đăng ký user thành công.");
+      navigate("/login");
+    } else {
+      //error
+      message.error(res.message);
+    }
+    setIsSubmit(false);
   };
 
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
@@ -18,7 +35,6 @@ const RegisterPage = () => {
   ) => {
     console.log("Failed:", errorInfo);
   };
-  const navigate = useNavigate();
   return (
     <div className="flex justify-center items-center flex-1 h-[100vh] w-[100vw]">
       <div className="bg-gray-200 rounded-2xl p-12 w-[30vw]">
@@ -36,9 +52,9 @@ const RegisterPage = () => {
               span: 24,
             }}
             wrapperCol={{ span: 24 }}
-            label="Username"
-            name="username"
-            rules={[{ required: true, message: "Please input your username!" }]}
+            label="Email"
+            name="email"
+            rules={[{ required: true, message: "Please input your email!" }]}
           >
             <Input />
           </Form.Item>
@@ -58,11 +74,13 @@ const RegisterPage = () => {
               span: 24,
             }}
             wrapperCol={{ span: 24 }}
-            label="Confirm Password"
-            name="confirmPassword"
-            rules={[{ required: true, message: "Please input your password!" }]}
+            label="FullName"
+            name="fullName"
+            rules={[
+              { required: true, message: "Please input your full name!" },
+            ]}
           >
-            <Input.Password />
+            <Input />
           </Form.Item>
           <Form.Item
             label={null}
@@ -71,7 +89,7 @@ const RegisterPage = () => {
               span: 24,
             }}
           >
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={isSubmit}>
               Sign up
             </Button>
           </Form.Item>

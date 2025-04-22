@@ -12,6 +12,7 @@ import Users from "./pages/admin/users";
 import Shoes from "./pages/admin/shoes";
 import Orders from "./pages/admin/orders";
 import enUS from "antd/es/locale/en_US";
+import { AppProvider } from "./components/context/app.context";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -51,8 +52,10 @@ const root = document.getElementById("root");
 
 ReactDOM.createRoot(root!).render(
   <App>
-    <ConfigProvider locale={enUS}>
-      <RouterProvider router={router} />
-    </ConfigProvider>
+    <AppProvider>
+      <ConfigProvider locale={enUS}>
+        <RouterProvider router={router} />
+      </ConfigProvider>
+    </AppProvider>
   </App>
 );

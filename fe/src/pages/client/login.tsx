@@ -1,16 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import type { FormProps } from "antd";
-import { Button, Checkbox, Form, Input } from "antd";
+import { App, Button, Checkbox, Form, Input } from "antd";
 import { useNavigate } from "react-router-dom";
+import { loginAPI } from "@/services/api";
+import { useCurrentApp } from "@/components/context/app.context";
 type FieldType = {
-  username?: string;
-  password?: string;
-  remember?: string;
+  username: string;
+  password: string;
 };
 
 const LoginPage = () => {
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Success:", values);
+  const [isSubmit, setIsSubmit] = useState(false);
+  const { message, notification } = App.useApp();
+  const { setIsAuthenticated, setUser } = useCurrentApp();
+  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    const { username, password } = values;
+    setIsSubmit(true);
+    const res = await loginAPI(username, password);
+    setIsSubmit(false);
+    if (res?.data) {
+      setIsAuthenticated(true);
+      setUser(res.data.user);
+      localStorage.setItem("access_token", res.data.access_token);
+      message.success("Đăng nhập tài khoản thành công!");
+      navigate("/");
+    } else {
+      notification.error({
+        message: "Có lỗi xảy ra",
+        description:
+          res.message && Array.isArray(res.message)
+            ? res.message[0]
+            : res.message,
+        duration: 5,
+      });
+    }
   };
 
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
@@ -60,11 +83,11 @@ const LoginPage = () => {
               span: 24,
             }}
           >
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={isSubmit}>
               Login
             </Button>
           </Form.Item>
-          Don't have an acoount?{" "}
+          Don't have an account?{" "}
           <span
             onClick={() => navigate("/register")}
             className="text-blue-400 cursor-pointer"
