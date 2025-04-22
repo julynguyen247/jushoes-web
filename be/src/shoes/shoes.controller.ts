@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { ShoesService } from './shoes.service';
 import { CreateShoeDto } from './dto/create-shoe.dto';
 import { UpdateShoeDto } from './dto/update-shoe.dto';
@@ -13,8 +22,12 @@ export class ShoesController {
   }
 
   @Get()
-  findAll() {
-    return this.shoesService.findAll();
+  findAll(
+    @Query('page') currentPage: string,
+    @Query('limit') limit: string,
+    @Query() qs: string,
+  ) {
+    return this.shoesService.findAll(+currentPage, +limit, qs);
   }
 
   @Get(':id')
@@ -24,11 +37,11 @@ export class ShoesController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateShoeDto: UpdateShoeDto) {
-    return this.shoesService.update(+id, updateShoeDto);
+    return this.shoesService.update(id, updateShoeDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.shoesService.remove(+id);
+    return this.shoesService.remove(id);
   }
 }
