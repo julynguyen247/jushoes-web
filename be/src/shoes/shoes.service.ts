@@ -47,6 +47,9 @@ export class ShoesService {
   findOne(id: number) {
     return `This action returns a #${id} shoe`;
   }
+  async findById(id: string) {
+    return this.shoesModel.findById(id);
+  }
 
   async update(id: string, updateShoeDto: UpdateShoeDto) {
     return await this.shoesModel.updateOne({ _id: id }, { ...updateShoeDto });

@@ -10,5 +10,6 @@ import { Shoes, ShoesSchema } from './schemas/shoe.schema';
   ],
   controllers: [ShoesController],
   providers: [ShoesService],
+  exports: [ShoesService],
 })
 export class ShoesModule {}
