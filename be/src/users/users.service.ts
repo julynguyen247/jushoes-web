@@ -45,4 +45,7 @@ export class UsersService {
   async remove(id: string) {
     return this.userModel.delete({ _id: id });
   }
+  updateUserToken = async (refreshToken: string, _id: string) => {
+    return await this.userModel.updateOne({ _id: _id }, { refreshToken });
+  };
 }
