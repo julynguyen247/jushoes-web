@@ -15,6 +15,8 @@ export class User {
   @Prop()
   address: string;
   @Prop()
+  role: string;
+  @Prop()
   refreshToken: string;
   @Prop()
   createdAt: Date;
