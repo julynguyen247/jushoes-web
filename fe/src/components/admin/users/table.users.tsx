@@ -136,7 +136,7 @@ const TableUser = () => {
               sort.createdAt === "ascend" ? "createdAt" : "-createdAt"
             }`;
           } else query += `&sort=-createdAt`;
-          const res = await getAllUsersAPI();
+          const res = await getAllUsersAPI(query);
           if (res && res.data) {
             setUserTable(res.data.result);
             setMeta(res.data.meta);

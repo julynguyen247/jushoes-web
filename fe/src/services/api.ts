@@ -27,14 +27,11 @@ export const fetchAccountAPI = () => {
   const urlBackend = "/api/v1/auth/account";
   return axios.get<IBackendRes<IUser>>(urlBackend);
 };
-export const getAllUsersAPI = () => {
-  const urlBackend = "/api/v1/users";
+export const getAllUsersAPI = (query: string) => {
+  const urlBackend = `/api/v1/users?${query}`;
   return axios.get<IBackendRes<IModelPaginate<IUserTable>>>(urlBackend);
 };
-export const getAllBooksAPI = () => {
-  const urlBackend = "/api/v1/shoes";
-  return axios.get<IBackendRes<IModelPaginate<IUserTable>>>(urlBackend);
-};
+
 export const createUserAPI = (
   fullName: string,
   email: string,
@@ -50,10 +47,44 @@ export const createUserAPI = (
   });
 };
 export const updateUserAPI = (_id: string, fullName: string, phone: string) => {
-  const urlBackend = "/api/v1/users";
+  const urlBackend = `/api/v1/users/${_id}`;
   return axios.put<IBackendRes<IRegister>>(urlBackend, {
     _id,
     fullName,
     phone,
+  });
+};
+export const getShoesAPI = (query: string) => {
+  const urlBackend = `/api/v1/shoes?${query}`;
+  return axios.get<IBackendRes<IModelPaginate<IShoesTable>>>(urlBackend);
+};
+export const createShoesAPI = (
+  mainText: string,
+  brand: string,
+  price: number,
+  quantity: number
+) => {
+  const urlBackend = "/api/v1/shoes";
+  return axios.post<IBackendRes<IShoesTable>>(urlBackend, {
+    mainText,
+    brand,
+    price,
+    quantity,
+  });
+};
+export const updateShoesAPI = (
+  _id: string,
+  mainText: string,
+  brand: string,
+  price: number,
+  quantity: number
+) => {
+  const urlBackend = `/api/v1/shoes/${_id}`;
+  return axios.put<IBackendRes<IShoesTable>>(urlBackend, {
+    _id,
+    mainText,
+    brand,
+    price,
+    quantity,
   });
 };

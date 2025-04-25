@@ -43,4 +43,13 @@ declare global {
     phone: string;
     _id: string;
   }
+  interface IShoesTable {
+    _id: string;
+    mainText: string;
+    brand: string;
+    price: number;
+    quantity: number;
+    createdAt: string;
+    updatedAt: string;
+  }
 }

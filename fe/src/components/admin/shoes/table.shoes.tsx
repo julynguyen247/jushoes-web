@@ -1,3 +1,5 @@
+import { getAllUsersAPI, getShoesAPI } from "@/services/api";
+import { dateRangeValidate } from "@/services/helper";
 import {
   CloudUploadOutlined,
   DeleteTwoTone,
@@ -7,20 +9,24 @@ import {
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import { App, Button, Popconfirm } from "antd";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import CreateShoes from "./create.shoes";
+import UpdateShoes from "./update.shoes";
 
 type TSearch = {
-  fullName: string;
-  email: string;
-  createdAt: string;
-  createdAtRange: string;
+  mainText?: string;
+  brand?: string;
+  createdAt?: string;
+  createdAtRange?: string;
 };
 
 const TableShoes = () => {
   const actionRef = useRef<ActionType | undefined>(undefined);
-
+  const [shoesTable, setShoesTable] = useState<IShoesTable[]>([]);
   const [isDeleteUser, setIsDeleteUser] = useState(false);
-
+  const [openModalUpdate, setOpenModalUpdate] = useState<boolean>(false);
+  const [dataUpdate, setDataUpdate] = useState<IShoesTable | null>(null);
+  const [openModalCreate, setOpenModalCreate] = useState<boolean>(false);
   const [meta, setMeta] = useState({
     current: 1,
     pageSize: 5,
@@ -28,7 +34,7 @@ const TableShoes = () => {
     total: 0,
   });
 
-  const columns: ProColumns<IUserTable>[] = [
+  const columns: ProColumns<IShoesTable>[] = [
     {
       dataIndex: "index",
       valueType: "indexBorder",
@@ -40,16 +46,15 @@ const TableShoes = () => {
       hideInSearch: true,
     },
     {
-      title: "Full Name",
-      dataIndex: "fullName",
+      title: "Shoes Name",
+      dataIndex: "mainText",
       fieldProps: {
         placeholder: "",
       },
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      copyable: true,
+      title: "Brand",
+      dataIndex: "brand",
       fieldProps: {
         placeholder: "",
       },
@@ -78,6 +83,10 @@ const TableShoes = () => {
           <EditTwoTone
             twoToneColor="#f57800"
             style={{ cursor: "pointer", marginRight: 15 }}
+            onClick={() => {
+              setDataUpdate(entity);
+              setOpenModalUpdate(true);
+            }}
           />
           <DeleteTwoTone twoToneColor="#ff4d4f" style={{ cursor: "pointer" }} />
         </>
@@ -91,7 +100,7 @@ const TableShoes = () => {
 
   return (
     <>
-      <ProTable<IUserTable, TSearch>
+      <ProTable<IShoesTable, TSearch>
         columns={columns}
         actionRef={actionRef}
         cardBordered
@@ -107,7 +116,36 @@ const TableShoes = () => {
           ),
         }}
         request={async (params, sort, filter) => {
-          return <div>he</div>;
+          let query = "";
+          if (params) {
+            query += `page=${params.current}&limit=${params.pageSize}`;
+            if (params.mainText) {
+              query += `&mainText=/${params.mainText}/i`;
+            }
+            if (params.brand) {
+              query += `&brand=/${params.brand}/i`;
+            }
+            const createDateRange = dateRangeValidate(params.createdAtRange);
+            if (createDateRange) {
+              query += `&createdAt>=${createDateRange[0]}&createdAt<=${createDateRange[1]}`;
+            }
+          }
+          if (sort && sort.createdAt) {
+            query += `&sort=${
+              sort.createdAt === "ascend" ? "createdAt" : "-createdAt"
+            }`;
+          } else query += `&sort=-createdAt`;
+          const res = await getShoesAPI(query);
+          if (res && res.data) {
+            setShoesTable(res.data.result);
+            setMeta(res.data.meta);
+          }
+          return {
+            data: res.data?.result,
+            page: 1,
+            success: true,
+            total: res.data?.meta.total,
+          };
         }}
         headerTitle="Table user"
         toolBarRender={() => [
@@ -126,12 +164,24 @@ const TableShoes = () => {
             icon={<PlusOutlined />}
             type="primary"
             onClick={() => {
-              console.log("Add new user");
+              setOpenModalCreate(true);
             }}
           >
             Add new
           </Button>,
         ]}
+      />
+      <CreateShoes
+        openModalCreate={openModalCreate}
+        setOpenModalCreate={setOpenModalCreate}
+        refreshTable={refreshTable}
+      />
+      <UpdateShoes
+        openModalUpdate={openModalUpdate}
+        setOpenModalUpdate={setOpenModalUpdate}
+        refreshTable={refreshTable}
+        dataUpdate={dataUpdate}
+        setDataUpdate={setDataUpdate}
       />
     </>
   );
