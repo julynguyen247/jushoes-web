@@ -6,6 +6,7 @@ import { User, UserDocument } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 import { SoftDeleteModel } from 'mongoose-delete';
+import aqp from 'api-query-params';
 
 @Injectable()
 export class UsersService {
@@ -21,14 +22,40 @@ export class UsersService {
       email: createUserDto.email,
       password: hashPassword,
       fullName: createUserDto.fullName,
+      phone: createUserDto.phone,
+      role: 'USER',
     });
     return user;
   }
   isValidPassword(password: string, hash: string) {
     return compareSync(password, hash);
   }
-  async findAll() {
-    return await this.userModel.find();
+  async findAll(currentPage: number, limit: number, qs: string) {
+    const { filter, population, sort } = aqp(qs);
+    delete filter.page;
+    delete filter.limit;
+    let offset = (+currentPage - 1) * +limit;
+    let defaultLimit = +limit ? +limit : 10;
+    const totalItems = (await this.userModel.find(filter)).length;
+    const totalPages = Math.ceil(totalItems / defaultLimit);
+    const result = await this.userModel
+      .find(filter)
+      .skip(offset)
+      .limit(defaultLimit)
+      .sort(sort as any)
+      .populate(population)
+      .select('-password -deleted -refreshToken')
+      .exec();
+
+    return {
+      meta: {
+        current: currentPage, //trang hiện tại
+        pageSize: limit, //số lượng bản ghi đã lấy
+        pages: totalPages, //tổng số trang với điều kiện query
+        total: totalItems, // tổng số phần tử (số bản ghi)
+      },
+      result, //kết quả query
+    };
   }
 
   async findOne(id: string) {

@@ -8,4 +8,7 @@ export class CreateUserDto {
   password: string;
   @IsNotEmpty()
   fullName: string;
+  @IsNotEmpty()
+  phone: string;
+  role: string;
 }

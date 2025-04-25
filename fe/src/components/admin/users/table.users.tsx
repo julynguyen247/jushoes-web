@@ -1,3 +1,5 @@
+import { getAllUsersAPI } from "@/services/api";
+import { dateRangeValidate } from "@/services/helper";
 import {
   CloudUploadOutlined,
   DeleteTwoTone,
@@ -7,7 +9,9 @@ import {
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import { App, Button, Popconfirm } from "antd";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import CreateUser from "./create.user";
+import UpdateUser from "./update.user";
 
 type TSearch = {
   fullName: string;
@@ -18,9 +22,11 @@ type TSearch = {
 
 const TableUser = () => {
   const actionRef = useRef<ActionType | undefined>(undefined);
-
+  const [userTable, setUserTable] = useState<IUserTable[]>([]);
   const [isDeleteUser, setIsDeleteUser] = useState(false);
-
+  const [openModalUpdate, setOpenModalUpdate] = useState<boolean>(false);
+  const [dataUpdate, setDataUpdate] = useState<IUserTable | null>(null);
+  const [openModalCreate, setOpenModalCreate] = useState<boolean>(false);
   const [meta, setMeta] = useState({
     current: 1,
     pageSize: 5,
@@ -78,6 +84,10 @@ const TableUser = () => {
           <EditTwoTone
             twoToneColor="#f57800"
             style={{ cursor: "pointer", marginRight: 15 }}
+            onClick={() => {
+              setDataUpdate(entity);
+              setOpenModalUpdate(true);
+            }}
           />
           <DeleteTwoTone twoToneColor="#ff4d4f" style={{ cursor: "pointer" }} />
         </>
@@ -107,7 +117,36 @@ const TableUser = () => {
           ),
         }}
         request={async (params, sort, filter) => {
-          return <div>he</div>;
+          let query = "";
+          if (params) {
+            query += `page=${params.current}&limit=${params.pageSize}`;
+            if (params.email) {
+              query += `&email=/${params.email}/i`;
+            }
+            if (params.fullName) {
+              query += `&fullName=/${params.fullName}/i`;
+            }
+            const createDateRange = dateRangeValidate(params.createdAtRange);
+            if (createDateRange) {
+              query += `&createdAt>=${createDateRange[0]}&createdAt<=${createDateRange[1]}`;
+            }
+          }
+          if (sort && sort.createdAt) {
+            query += `&sort=${
+              sort.createdAt === "ascend" ? "createdAt" : "-createdAt"
+            }`;
+          } else query += `&sort=-createdAt`;
+          const res = await getAllUsersAPI();
+          if (res && res.data) {
+            setUserTable(res.data.result);
+            setMeta(res.data.meta);
+          }
+          return {
+            data: res.data?.result,
+            page: 1,
+            success: true,
+            total: res.data?.meta.total,
+          };
         }}
         headerTitle="Table user"
         toolBarRender={() => [
@@ -126,12 +165,24 @@ const TableUser = () => {
             icon={<PlusOutlined />}
             type="primary"
             onClick={() => {
-              console.log("Add new user");
+              setOpenModalCreate(true);
             }}
           >
             Add new
           </Button>,
         ]}
+      />
+      <CreateUser
+        openModalCreate={openModalCreate}
+        setOpenModalCreate={setOpenModalCreate}
+        refreshTable={refreshTable}
+      />
+      <UpdateUser
+        openModalUpdate={openModalUpdate}
+        setOpenModalUpdate={setOpenModalUpdate}
+        refreshTable={refreshTable}
+        setDataUpdate={setDataUpdate}
+        dataUpdate={dataUpdate}
       />
     </>
   );
