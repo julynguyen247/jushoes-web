@@ -10,7 +10,8 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ShoesModule } from './shoes/shoes.module';
 import { OrdersModule } from './orders/orders.module';
 import { FilesModule } from './files/files.module';
-
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 @Module({
   imports: [
     UsersModule,
