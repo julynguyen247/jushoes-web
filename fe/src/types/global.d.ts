@@ -36,6 +36,7 @@ declare global {
     email: string;
     fullName: string;
     _id: string;
+    role: string;
   }
   interface IRegister {
     email: string;

@@ -48,7 +48,7 @@ export const createUserAPI = (
 };
 export const updateUserAPI = (_id: string, fullName: string, phone: string) => {
   const urlBackend = `/api/v1/users/${_id}`;
-  return axios.put<IBackendRes<IRegister>>(urlBackend, {
+  return axios.patch<IBackendRes<IRegister>>(urlBackend, {
     _id,
     fullName,
     phone,
@@ -80,11 +80,23 @@ export const updateShoesAPI = (
   quantity: number
 ) => {
   const urlBackend = `/api/v1/shoes/${_id}`;
-  return axios.put<IBackendRes<IShoesTable>>(urlBackend, {
+  return axios.patch<IBackendRes<IShoesTable>>(urlBackend, {
     _id,
     mainText,
     brand,
     price,
     quantity,
   });
+};
+export const deleteUserAPI = (_id: string) => {
+  const urlBackend = `/api/v1/users/${_id}`;
+  return axios.delete<IBackendRes<IRegister>>(urlBackend);
+};
+export const deleteShoesAPI = (_id: string) => {
+  const urlBackend = `/api/v1/shoes/${_id}`;
+  return axios.delete<IBackendRes<IRegister>>(urlBackend);
+};
+export const logoutAPI = () => {
+  const urlBackend = `/api/v1/logout`;
+  return axios.post<IBackendRes<IRegister>>(urlBackend);
 };

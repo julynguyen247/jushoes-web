@@ -13,6 +13,8 @@ import Shoes from "./pages/admin/shoes";
 import Orders from "./pages/admin/orders";
 import enUS from "antd/es/locale/en_US";
 import { AppProvider } from "./components/context/app.context";
+import Protected from "./components/auth";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -23,18 +25,37 @@ const router = createBrowserRouter([
     path: "/admin",
     Component: AdminLayout,
     children: [
-      { index: true, Component: Dashboard },
       {
-        path: "/admin/users",
-        Component: Users,
+        index: true,
+        element: (
+          <Protected>
+            <Dashboard />
+          </Protected>
+        ),
       },
       {
-        path: "/admin/shoes",
-        Component: Shoes,
+        path: "users",
+        element: (
+          <Protected>
+            <Users />
+          </Protected>
+        ),
       },
       {
-        path: "/admin/orders",
-        Component: Orders,
+        path: "shoes",
+        element: (
+          <Protected>
+            <Shoes />
+          </Protected>
+        ),
+      },
+      {
+        path: "orders",
+        element: (
+          <Protected>
+            <Orders />
+          </Protected>
+        ),
       },
     ],
   },

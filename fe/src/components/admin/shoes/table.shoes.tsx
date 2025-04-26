@@ -1,4 +1,4 @@
-import { getAllUsersAPI, getShoesAPI } from "@/services/api";
+import { deleteShoesAPI, getAllUsersAPI, getShoesAPI } from "@/services/api";
 import { dateRangeValidate } from "@/services/helper";
 import {
   CloudUploadOutlined,
@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
-import { App, Button, Popconfirm } from "antd";
+import { App, Button, message, notification, Popconfirm } from "antd";
 import { useEffect, useRef, useState } from "react";
 import CreateShoes from "./create.shoes";
 import UpdateShoes from "./update.shoes";
@@ -33,7 +33,20 @@ const TableShoes = () => {
     pages: 0,
     total: 0,
   });
-
+  const handleDeleteShoes = async (_id: string) => {
+    setIsDeleteUser(true);
+    const res = await deleteShoesAPI(_id);
+    if (res && res.data) {
+      message.success("Xóa user thành công");
+      refreshTable();
+    } else {
+      notification.error({
+        message: "Đã có lỗi xảy ra",
+        description: res.message,
+      });
+    }
+    setIsDeleteUser(false);
+  };
   const columns: ProColumns<IShoesTable>[] = [
     {
       dataIndex: "index",
@@ -88,7 +101,22 @@ const TableShoes = () => {
               setOpenModalUpdate(true);
             }}
           />
-          <DeleteTwoTone twoToneColor="#ff4d4f" style={{ cursor: "pointer" }} />
+          <Popconfirm
+            placement="leftTop"
+            title={"Xác nhận xóa user"}
+            description={"Bạn có chắc chắn muốn xóa user này ?"}
+            onConfirm={() => handleDeleteShoes(entity._id)}
+            okText="Xác nhận"
+            cancelText="Hủy"
+            okButtonProps={{ loading: isDeleteUser }}
+          >
+            <span style={{ cursor: "pointer", marginLeft: 20 }}>
+              <DeleteTwoTone
+                twoToneColor="#ff4d4f"
+                style={{ cursor: "pointer" }}
+              />
+            </span>
+          </Popconfirm>
         </>
       ),
     },

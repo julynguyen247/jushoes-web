@@ -2,19 +2,31 @@ import { Dropdown, Input, MenuProps, Popover, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
 import { FcDislike } from "react-icons/fc";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useCurrentApp } from "../context/app.context";
+import { logoutAPI } from "@/services/api";
 
 const AppHeader = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const { user } = useCurrentApp();
-  const items: MenuProps["items"] = [
-    { key: "1", label: <Link to="/admin">Admin</Link> },
-    { key: "2", label: <Link to="/login">Login</Link> },
-    { key: "3", label: <Link to="/info">Change Info</Link> },
-  ];
+  const { user, isAuthenticated } = useCurrentApp();
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    const res = await logoutAPI();
+    if (res) {
+      localStorage.removeItem("access_token");
+      navigate("/login");
+    }
+  };
+
+  const items: MenuProps["items"] = isAuthenticated
+    ? [
+        { key: "1", label: <Link to="/admin">Admin</Link> },
+        { key: "3", label: <Link to="/info">Change Info</Link> },
+        { key: "4", label: <span onClick={() => handleLogout()}>Logout</span> },
+      ]
+    : [{ key: "2", label: <Link to="/login">Login</Link> }];
 
   const content = (
     <div>
