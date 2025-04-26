@@ -22,11 +22,16 @@ const AppHeader = () => {
 
   const items: MenuProps["items"] = isAuthenticated
     ? [
-        { key: "1", label: <Link to="/admin">Admin</Link> },
+        ...(user?.role === "ADMIN"
+          ? [{ key: "1", label: <Link to="/admin">Admin</Link> }]
+          : []),
         { key: "3", label: <Link to="/info">Change Info</Link> },
-        { key: "4", label: <span onClick={() => handleLogout()}>Logout</span> },
+        { key: "4", label: <span onClick={handleLogout}>Logout</span> },
       ]
-    : [{ key: "2", label: <Link to="/login">Login</Link> }];
+    : [
+        { key: "2", label: <Link to="/login">Login</Link> },
+        { key: "5", label: <Link to="/register">Signup</Link> },
+      ];
 
   const content = (
     <div>
