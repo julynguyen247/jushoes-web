@@ -26,9 +26,11 @@ export class FilesController {
   uploadFile(
     @UploadedFile(
       new ParseFilePipeBuilder()
-        // .addFileTypeValidator({
-        //   fileType: 'jpeg',
-        // })
+        .addFileTypeValidator({
+          fileType:
+            /^(jpg|jpeg|image\/jpeg|png|image\/png|gif|txt|pdf|application\/pdf|doc|docx|text\/plain)$/i,
+        })
+
         .addMaxSizeValidator({
           maxSize: 1024 * 1000,
         })
@@ -38,7 +40,9 @@ export class FilesController {
     )
     file: Express.Multer.File,
   ) {
-    console.log(file);
+    return {
+      fileName: file.filename,
+    };
   }
 
   @Get()

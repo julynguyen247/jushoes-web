@@ -17,6 +17,10 @@ export class Shoes {
   @Prop()
   quantity: string;
   @Prop()
+  sliders: string[];
+  @Prop()
+  category: string;
+  @Prop()
   createdAt: Date;
   @Prop()
   updatedAt: Date;

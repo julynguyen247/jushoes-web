@@ -29,7 +29,10 @@ export class ShoesController {
   ) {
     return this.shoesService.findAll(+currentPage, +limit, qs);
   }
-
+  @Get('/categories')
+  getCategories() {
+    return ['Sneakers', 'Sports'];
+  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.shoesService.findOne(+id);
