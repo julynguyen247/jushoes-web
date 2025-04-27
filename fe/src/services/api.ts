@@ -62,7 +62,9 @@ export const createShoesAPI = (
   mainText: string,
   brand: string,
   price: number,
-  quantity: number
+  quantity: number,
+  thumbnail: string,
+  slider: string[]
 ) => {
   const urlBackend = "/api/v1/shoes";
   return axios.post<IBackendRes<IShoesTable>>(urlBackend, {
@@ -70,6 +72,8 @@ export const createShoesAPI = (
     brand,
     price,
     quantity,
+    thumbnail,
+    slider,
   });
 };
 export const updateShoesAPI = (
@@ -99,4 +103,18 @@ export const deleteShoesAPI = (_id: string) => {
 export const logoutAPI = () => {
   const urlBackend = `/api/v1/logout`;
   return axios.post<IBackendRes<IRegister>>(urlBackend);
+};
+export const uploadFileAPI = (file: any, folder: string) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return axios<IBackendRes<{ fileUploaded: string }>>({
+    method: "post",
+    url: "/api/v1/file/upload",
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "upload-type": folder,
+    },
+  });
 };

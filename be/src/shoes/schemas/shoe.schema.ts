@@ -13,11 +13,10 @@ export class Shoes {
   @Prop()
   thumbnail: string;
   @Prop()
-  slider: string;
+  slider: string[];
   @Prop()
   quantity: string;
-  @Prop()
-  sliders: string[];
+
   @Prop()
   category: string;
   @Prop()

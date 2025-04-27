@@ -50,6 +50,9 @@ declare global {
     brand: string;
     price: number;
     quantity: number;
+    category: string;
+    thumbnail: string;
+    slider: string[];
     createdAt: string;
     updatedAt: string;
   }
