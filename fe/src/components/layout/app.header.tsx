@@ -12,6 +12,7 @@ const AppHeader = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const { user, isAuthenticated } = useCurrentApp();
   const navigate = useNavigate();
+
   const handleLogout = async () => {
     const res = await logoutAPI();
     if (res) {
@@ -20,41 +21,33 @@ const AppHeader = () => {
     }
   };
 
-  const items: MenuProps["items"] = isAuthenticated
+  const userMenu: MenuProps["items"] = isAuthenticated
     ? [
         ...(user?.role === "ADMIN"
-          ? [{ key: "1", label: <Link to="/admin">Admin</Link> }]
+          ? [{ key: "admin", label: <Link to="/admin">Admin</Link> }]
           : []),
-        { key: "3", label: <Link to="/info">Change Info</Link> },
-        { key: "4", label: <span onClick={handleLogout}>Logout</span> },
+        { key: "info", label: <Link to="/info">Change Info</Link> },
+        { key: "logout", label: <span onClick={handleLogout}>Logout</span> },
       ]
     : [
-        { key: "2", label: <Link to="/login">Login</Link> },
-        { key: "5", label: <Link to="/register">Signup</Link> },
+        { key: "login", label: <Link to="/login">Login</Link> },
+        { key: "signup", label: <Link to="/register">Signup</Link> },
       ];
 
-  const content = (
-    <div>
-      <p>Content</p>
-      <p>Content</p>
+  const cartContent = (
+    <div className="text-center">
+      <p>Chưa có sản phẩm</p>
     </div>
   );
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setShowHeader(false);
-      } else {
-        setShowHeader(true);
-      }
-
+      setShowHeader(currentScrollY <= lastScrollY || currentScrollY < 100);
       setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll);
-
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
@@ -64,44 +57,51 @@ const AppHeader = () => {
         showHeader ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="flex flex-row h-[10vh] shadow-2xl bg-[#001A2D]">
-        <div className="flex-[0.3] flex justify-center items-center gap-2">
-          <FcDislike size={40} />
-          <span className="font-bold text-white">Jushoes Shop</span>
+      <div className="flex flex-row h-[10vh] shadow-md bg-[#001A2D] items-center px-10">
+        <div className="flex-1 flex items-center gap-2">
+          <FcDislike size={36} />
+          <Link to="/" className="text-2xl font-bold text-white">
+            Jushoes Shop
+          </Link>
         </div>
-        <div className="flex-[0.4] flex items-center justify-center">
-          <Input placeholder="Search..." />
+
+        <div className="flex-1 flex justify-center">
+          <Input.Search
+            placeholder="Tìm kiếm sản phẩm..."
+            allowClear
+            style={{ width: 400 }}
+          />
         </div>
-        <div className="flex-[0.3] flex items-center justify-center gap-8">
-          <div className="relative">
-            <div className="absolute -top-2 -right-2 bg-white rounded-full w-4 h-4 text-xs text-black flex items-center justify-center">
-              0
+
+        <div className="flex-1 flex items-center justify-end gap-8 text-white">
+          <Popover content={cartContent} title="Giỏ hàng">
+            <div className="relative cursor-pointer">
+              <FaShoppingCart size={24} />
+              <div className="absolute -top-2 -right-2 bg-red-500 rounded-full w-4 h-4 text-xs flex items-center justify-center">
+                0
+              </div>
             </div>
-            <Popover content={content} title="Giỏ hàng">
-              <FaShoppingCart size={20} color="white" />
-            </Popover>
-          </div>
-          <div>
-            <Dropdown menu={{ items }}>
-              <Space>
-                <FaUser size={20} color="white" />
-                <span className="text-white">{user?.fullName}</span>
-                <DownOutlined style={{ color: "white" }} />
-              </Space>
-            </Dropdown>
-          </div>
+          </Popover>
+
+          <Dropdown menu={{ items: userMenu }}>
+            <Space className="cursor-pointer">
+              <FaUser size={24} />
+              <span>{isAuthenticated ? user?.fullName : "Tài khoản"}</span>
+              <DownOutlined />
+            </Space>
+          </Dropdown>
         </div>
       </div>
 
-      <div className="flex flex-row h-[5vh] shadow bg-white justify-center items-center gap-10">
+      <div className="flex flex-row h-[6vh] bg-white shadow-sm items-center justify-center gap-10 text-black font-semibold">
         {["Adidas", "Nike", "Puma", "Bitis", "Jordan", "Converse"].map(
           (brand) => (
-            <Dropdown menu={{ items }} key={brand}>
-              <Space>
-                <span className="font-bold">{brand}</span>
-                <DownOutlined />
-              </Space>
-            </Dropdown>
+            <div
+              key={brand}
+              className="hover:text-blue-500 cursor-pointer transition-colors"
+            >
+              {brand}
+            </div>
           )
         )}
       </div>

@@ -56,4 +56,7 @@ declare global {
     createdAt: string;
     updatedAt: string;
   }
+  interface IFetchAccount {
+    user: IUser;
+  }
 }

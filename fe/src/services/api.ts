@@ -25,7 +25,7 @@ export const registerAPI = (
 };
 export const fetchAccountAPI = () => {
   const urlBackend = "/api/v1/auth/account";
-  return axios.get<IBackendRes<IUser>>(urlBackend);
+  return axios.get<IBackendRes<IFetchAccount>>(urlBackend);
 };
 export const getAllUsersAPI = (query: string) => {
   const urlBackend = `/api/v1/users?${query}`;

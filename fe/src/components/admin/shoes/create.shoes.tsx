@@ -157,14 +157,6 @@ const CreateShoes = (props: IProps) => {
     }
   };
   const handleChange = (info: UploadChangeParam, type: UserUploadType) => {
-    let newFileList = [...info.fileList];
-
-    if (type === "thumbnail") {
-      setFileListThumbnail(newFileList);
-    } else {
-      setFileListSlider(newFileList);
-    }
-
     if (info.file.status === "uploading") {
       type === "slider" ? setLoadingSlider(true) : setLoadingThumbnail(true);
       return;
