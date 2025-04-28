@@ -33,6 +33,10 @@ export class ShoesController {
   getCategories() {
     return ['Sneakers', 'Sports'];
   }
+  @Get('/brands')
+  getBrands() {
+    return ['Nike', 'Adidas', 'Puma', 'New Balance', 'Converse'];
+  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.shoesService.findOne(+id);

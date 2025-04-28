@@ -63,6 +63,7 @@ export const createShoesAPI = (
   brand: string,
   price: number,
   quantity: number,
+  category: string,
   thumbnail: string,
   slider: string[]
 ) => {
@@ -72,6 +73,7 @@ export const createShoesAPI = (
     brand,
     price,
     quantity,
+    category,
     thumbnail,
     slider,
   });
@@ -108,13 +110,21 @@ export const uploadFileAPI = (file: any, folder: string) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  return axios<IBackendRes<{ fileUploaded: string }>>({
+  return axios<IBackendRes<{ fileName: string }>>({
     method: "post",
-    url: "/api/v1/file/upload",
+    url: "/api/v1/files/upload",
     data: formData,
     headers: {
       "Content-Type": "multipart/form-data",
-      "upload-type": folder,
+      folder_type: folder,
     },
   });
+};
+export const getCategories = () => {
+  const urlBackend = `/api/v1/shoes/categories`;
+  return axios.get<IBackendRes<[]>>(urlBackend);
+};
+export const getBrands = () => {
+  const urlBackend = `/api/v1/shoes/brands`;
+  return axios.get<IBackendRes<[]>>(urlBackend);
 };

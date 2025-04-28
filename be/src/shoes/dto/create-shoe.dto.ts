@@ -9,11 +9,11 @@ export class CreateShoeDto {
   price: string;
   @IsNotEmpty()
   quantity: number;
-  @IsNotEmpty()
-  thumbnail: string;
+
   @IsNotEmpty()
   category: string;
+  @IsNotEmpty()
+  thumbnail: string;
   @IsArray()
-  @IsString({ each: true })
-  sliders: string[];
+  slider: string[];
 }

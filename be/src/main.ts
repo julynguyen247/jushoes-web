@@ -6,14 +6,14 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { TransformInterceptor } from './core/transform.interceptor';
 import * as cookieParser from 'cookie-parser';
 import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.useGlobalPipes(new ValidationPipe());
-  // app.useStaticAssets(join(__dirname, '..', 'public'));
 
   //config cors
   app.enableCors({
@@ -32,6 +32,10 @@ async function bootstrap() {
   });
   //config cookies
   app.use(cookieParser());
+
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('hbs');
   await app.listen(configService.get<string>('PORT') || 3000);
 }
 bootstrap();

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   App,
   Divider,
@@ -6,11 +6,17 @@ import {
   Image,
   Input,
   Modal,
+  Select,
   Upload,
   UploadFile,
 } from "antd";
 import type { FormProps, GetProp, UploadProps } from "antd";
-import { createShoesAPI, createUserAPI, uploadFileAPI } from "@/services/api";
+import {
+  createShoesAPI,
+  getBrands,
+  getCategories,
+  uploadFileAPI,
+} from "@/services/api";
 import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
 import { UploadChangeParam } from "antd/es/upload";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
@@ -27,6 +33,7 @@ type FieldType = {
   quantity: number;
   thumbnail: any;
   slider: any;
+  category: string;
 };
 
 const CreateShoes = (props: IProps) => {
@@ -44,9 +51,48 @@ const CreateShoes = (props: IProps) => {
   const [fileListSlider, setFileListSlider] = useState<UploadFile[]>([]);
   const [loadingThumbnail, setLoadingThumbnail] = useState<boolean>(false);
   const [loadingSlider, setLoadingSlider] = useState<boolean>(false);
-
+  const [listCategory, setListCategory] = useState<
+    {
+      label: string;
+      value: string;
+    }[]
+  >([]);
+  const [listBrands, setListBrands] = useState<
+    {
+      label: string;
+      value: string;
+    }[]
+  >([]);
+  useEffect(() => {
+    const fetchCategory = async () => {
+      const res = await getCategories();
+      if (res && res.data) {
+        const d = res.data.map((item) => {
+          return {
+            label: item,
+            value: item,
+          };
+        });
+        setListCategory(d);
+      }
+    };
+    const fetchBrand = async () => {
+      const res = await getBrands();
+      if (res && res.data) {
+        const d = res.data.map((item) => {
+          return {
+            label: item,
+            value: item,
+          };
+        });
+        setListBrands(d);
+      }
+    };
+    fetchCategory();
+    fetchBrand();
+  }, []);
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    const { mainText, brand, price, quantity } = values;
+    const { mainText, brand, price, quantity, category } = values;
     const thumbnail = fileListThumbnail?.[0]?.name ?? "";
     const slider = fileListSlider?.map((item) => item.name) ?? [];
     setIsSubmit(true);
@@ -55,11 +101,12 @@ const CreateShoes = (props: IProps) => {
       brand,
       price,
       quantity,
+      category,
       thumbnail,
       slider
     );
     if (res && res.data) {
-      message.success("Tạo mới user thành công");
+      message.success("Tạo mới shoes thành công");
       setFileListSlider([]);
       setFileListThumbnail([]);
       form.resetFields();
@@ -91,34 +138,43 @@ const CreateShoes = (props: IProps) => {
     const res = await uploadFileAPI(file, "shoes");
     if (res && res.data) {
       const uploadedFile: any = {
-        uid: file.uid,
-        name: res.data.fileUploaded,
+        uid: `${new Date().getTime()}-${Math.random()}`,
+        name: res.data.fileName,
         status: "done",
-        url: `${import.meta.env.VITE_BACKEND_URL}/public/images/shoes/${
-          res.data.fileUploaded
+        url: `${import.meta.env.VITE_BACKEND_URL}/images/shoes/${
+          res.data.fileName
         }`,
       };
       if (type === "thumbnail") {
-        setFileListThumbnail({ ...uploadedFile });
+        setFileListThumbnail([{ ...uploadedFile }]);
       } else {
         setFileListSlider((prevState) => [...prevState, { ...uploadedFile }]);
       }
+
       if (onSuccess) onSuccess("ok");
     } else {
       message.error(res.message);
     }
   };
   const handleChange = (info: UploadChangeParam, type: UserUploadType) => {
+    let newFileList = [...info.fileList];
+
+    if (type === "thumbnail") {
+      setFileListThumbnail(newFileList);
+    } else {
+      setFileListSlider(newFileList);
+    }
+
     if (info.file.status === "uploading") {
       type === "slider" ? setLoadingSlider(true) : setLoadingThumbnail(true);
       return;
     }
 
     if (info.file.status === "done") {
-      // Get this url from response in real world.
       type === "slider" ? setLoadingSlider(false) : setLoadingThumbnail(false);
     }
   };
+
   const beforeUpload = (file: FileType) => {
     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
     if (!isJpgOrPng) {
@@ -161,6 +217,8 @@ const CreateShoes = (props: IProps) => {
         }}
         onCancel={() => {
           setOpenModalCreate(false);
+          setFileListSlider([]);
+          setFileListThumbnail([]);
           form.resetFields();
         }}
         okText={"Tạo mới"}
@@ -188,9 +246,9 @@ const CreateShoes = (props: IProps) => {
             labelCol={{ span: 24 }}
             label="Brand"
             name="brand"
-            rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+            rules={[{ required: true, message: "Vui lòng chọn hang giay!" }]}
           >
-            <Input />
+            <Select showSearch allowClear options={listBrands} />
           </Form.Item>
           <Form.Item<FieldType>
             labelCol={{ span: 24 }}
@@ -209,17 +267,23 @@ const CreateShoes = (props: IProps) => {
             <Input />
           </Form.Item>
           <Form.Item<FieldType>
-            labelCol={{ span: 12 }}
+            labelCol={{ span: 24 }}
+            label="Category"
+            name="category"
+            rules={[{ required: true, message: "Vui lòng chọn thể loại!" }]}
+          >
+            <Select showSearch allowClear options={listCategory} />
+          </Form.Item>
+          <Form.Item<FieldType>
             label="Thumbnail"
-            name="quantity"
-            rules={[{ required: true, message: "Vui lòng nhập số luong!" }]}
+            name="thumbnail"
+            rules={[{ required: true, message: "Vui lòng upload thumbnail!" }]}
           >
             <Upload
               listType="picture-card"
               className="thumbnail-uploader"
               maxCount={1}
               multiple={false}
-              action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
               onPreview={handlePreview}
               beforeUpload={beforeUpload}
               customRequest={(options) =>
@@ -231,6 +295,29 @@ const CreateShoes = (props: IProps) => {
             >
               <div>
                 {loadingThumbnail ? <LoadingOutlined /> : <PlusOutlined />}
+                <div style={{ marginTop: 8 }}>Upload</div>
+              </div>
+            </Upload>
+          </Form.Item>
+          <Form.Item<FieldType>
+            label="Slider"
+            name="slider"
+            rules={[{ required: true, message: "Vui lòng upload slider!" }]}
+            getValueFromEvent={normFile}
+          >
+            <Upload
+              listType="picture-card"
+              className="slider-uploader"
+              multiple={true}
+              onPreview={handlePreview}
+              beforeUpload={beforeUpload}
+              customRequest={(options) => handleUploadFile(options, "slider")}
+              fileList={fileListSlider}
+              onChange={(info) => handleChange(info, "slider")}
+              onRemove={(file) => handleRemove(file, "slider")}
+            >
+              <div>
+                {loadingSlider ? <LoadingOutlined /> : <PlusOutlined />}
                 <div style={{ marginTop: 8 }}>Upload</div>
               </div>
             </Upload>
