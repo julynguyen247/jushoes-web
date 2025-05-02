@@ -94,8 +94,19 @@ const HomePage = () => {
     <div className="p-12 mt-28">
       <Carousel autoplay>
         {[1, 2, 3, 4].map((item) => (
-          <div key={item}>
-            <div style={contentStyle}>Banner {item}</div>
+          <div key={item} style={{ height: "300px", width: "100%" }}>
+            <img
+              src={`${
+                import.meta.env.VITE_BACKEND_URL
+              }/images/banners/banner${item}.jpg`}
+              alt={`Banner ${item}`}
+              style={{
+                width: "100%",
+                height: "500px",
+                objectFit: "cover",
+                borderRadius: "12px",
+              }}
+            />
           </div>
         ))}
       </Carousel>

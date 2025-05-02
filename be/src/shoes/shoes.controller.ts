@@ -11,6 +11,7 @@ import {
 import { ShoesService } from './shoes.service';
 import { CreateShoeDto } from './dto/create-shoe.dto';
 import { UpdateShoeDto } from './dto/update-shoe.dto';
+import { Public } from 'src/decorator/customize';
 
 @Controller('shoes')
 export class ShoesController {
@@ -21,6 +22,7 @@ export class ShoesController {
     return this.shoesService.create(createShoeDto);
   }
 
+  @Public()
   @Get()
   findAll(
     @Query('page') currentPage: string,
