@@ -24,3 +24,4 @@ const AuthStore = create<AppStore>()((set) => ({
     }
   },
 }));
+export default AuthStore;
